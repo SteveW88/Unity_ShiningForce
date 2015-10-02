@@ -6,24 +6,28 @@ public class ConstructGrid : MonoBehaviour {
 
 
 	public GameObject TilePrefab;
-	public GameObject PlayerPrefab;
+	public GameObject[] Character_Prefabs;	
 	public int GridSizeX;
 	public int GridSizeY;
-	private List<Tile> tileList = new List<Tile>();
-	public Transform mainCameraTrans;
+	public List<Tile> tileList = new List<Tile>();
+	public List<Character> characterList = new List<Character>();
+
 	public Transform gridTrans;
 	private Vector3 position = Vector3.zero;
 	private Quaternion rotation = Quaternion.identity;
+	public bool grid_constructed = false;
 
 	void Start(){
 		GenerateGrid ();
 
 		GenerateCharacters ();
+
+		InitializeCharacters ();
+
+		grid_constructed = true;
 	}
 
 	void GenerateGrid(){
-		mainCameraTrans.position = new Vector3 ((float)(GridSizeX - 1) / 2, (float)(GridSizeY - 1) / 2, -10);
-
 		for (int i=0; i<GridSizeX; i++) {
 			for(int j=0; j<GridSizeY; j++){
 				position.x = (float)i;
@@ -39,8 +43,19 @@ public class ConstructGrid : MonoBehaviour {
 	}
 
 	void GenerateCharacters(){
-		Vector3 pos = tileList [0].transform.position;
-		pos.z = -5f;
-		GameObject.Instantiate (PlayerPrefab, pos, rotation);
+		for (int i=0; i < Character_Prefabs.Length; i++) {
+			Vector3 pos = tileList [i].transform.position;
+			pos.z = -5f;
+			GameObject Character =GameObject.Instantiate (Character_Prefabs[i], pos, rotation) as GameObject;
+			characterList.Add(Character.GetComponent<Character>());
+
+		}
+	}
+
+	void InitializeCharacters(){
+		characterList[0].Initialize(10,100,1,2,true);
+		characterList[1].Initialize(10,100,1,1,false);
+		characterList[2].Initialize(10,100,1,2,true);
+
 	}
 }
